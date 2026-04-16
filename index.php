@@ -201,16 +201,52 @@ $isAdminAuthenticated = is_admin_authenticated();
       <section class="section" id="access">
         <div class="section-header">
           <div>
-            <p class="eyebrow">Access</p>
-            <h2>Login, manage profile, and request company access</h2>
+            <p class="eyebrow">Platform Access</p>
+            <h2>Join the network. Build together.</h2>
           </div>
           <p class="section-copy">
-            This is the account access surface for the next auth phase: sign in, maintain a talent
-            profile, update skills, and request company ownership access.
+            Create a talent or company account to post to the feed, message collaborators, bid on
+            projects, and manage your profile inside the platform.
           </p>
         </div>
 
-        <div class="access-layout">
+        <div class="access-gateway">
+          <div class="gateway-card">
+            <p class="company-kicker">Talent</p>
+            <h3>Join as a builder</h3>
+            <p>Create a profile, list your skills, browse open opportunities, and collaborate on projects through the platform.</p>
+            <ul class="access-list">
+              <li>Public or invite-only profile visibility</li>
+              <li>Bid on project and contract work</li>
+              <li>Direct messaging with companies and talent</li>
+              <li>Feed posts: achievements, skill shares, news</li>
+            </ul>
+            <a class="button button-primary" href="platform.php">Create Talent Account</a>
+          </div>
+
+          <div class="gateway-card">
+            <p class="company-kicker">Company</p>
+            <h3>Join as a company</h3>
+            <p>Post opportunities, manage a company profile, review incoming bids, and build a team through the project network.</p>
+            <ul class="access-list">
+              <li>Company profile with skills and open work</li>
+              <li>Post opportunities and project needs</li>
+              <li>Review bids and issue contracts</li>
+              <li>Feed posts: launches, events, collaborations</li>
+            </ul>
+            <a class="button button-primary" href="platform.php">Create Company Account</a>
+          </div>
+
+          <div class="gateway-card gateway-card--signin">
+            <p class="company-kicker">Returning?</p>
+            <h3>Sign back in</h3>
+            <p>Pick up where you left off — your feed, messages, bids, and profile are waiting.</p>
+            <a class="button button-secondary" href="platform.php">Sign In to Platform</a>
+          </div>
+        </div>
+
+        <!-- legacy access-layout kept for JS compatibility, hidden visually -->
+        <div class="access-layout" style="display:none;" aria-hidden="true">
           <aside class="access-rail" role="tablist" aria-label="Access options">
             <button class="access-tab is-active" type="button" data-access-tab="login">Login</button>
             <button class="access-tab" type="button" data-access-tab="signup">Sign Up</button>

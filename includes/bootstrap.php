@@ -1,6 +1,23 @@
 <?php
 declare(strict_types=1);
 
+// PHP 8.1 polyfill — Hostinger may run 8.0
+if (!function_exists('array_is_list')) {
+    function array_is_list(array $arr): bool
+    {
+        if ($arr === []) {
+            return true;
+        }
+        $i = 0;
+        foreach ($arr as $k => $_) {
+            if ($k !== $i++) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
 session_start();
 
 const FW_ADMIN_SESSION_KEY = 'fw_admin_authenticated';
