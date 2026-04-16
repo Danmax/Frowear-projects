@@ -142,7 +142,7 @@ function default_site_content(): array
     return [
         'companyInfo' => [
             'name' => 'Frowear Productions',
-            'brandMark' => 'FP',
+            'brandMark' => 'FWP',
             'tagline' => 'Design-led engineering for digital systems',
             'heroEyebrow' => 'UI Projects. Systems. APIs. Integrations.',
             'heroTitle' => 'High-tech digital work built for launch, scale, opportunity flow, and real collaboration.',

@@ -99,8 +99,12 @@ if ($action === 'save') {
         json_response(['ok' => false, 'message' => 'Invalid content payload.'], 422);
     }
 
-    $merged = merge_deep(default_site_content(), $content);
-    save_site_content($merged);
+    try {
+        $merged = merge_deep(default_site_content(), $content);
+        save_site_content($merged);
+    } catch (Throwable $e) {
+        json_response(['ok' => false, 'message' => 'Save failed: ' . $e->getMessage()], 500);
+    }
 
     json_response([
         'ok' => true,
@@ -111,8 +115,13 @@ if ($action === 'save') {
 
 if ($action === 'reset') {
     require_admin();
-    $defaults = default_site_content();
-    save_site_content($defaults);
+
+    try {
+        $defaults = default_site_content();
+        save_site_content($defaults);
+    } catch (Throwable $e) {
+        json_response(['ok' => false, 'message' => 'Reset failed: ' . $e->getMessage()], 500);
+    }
 
     json_response([
         'ok' => true,

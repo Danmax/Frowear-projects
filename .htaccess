@@ -13,13 +13,22 @@ Options -Indexes
     Deny from all
 </FilesMatch>
 
-# ── Block direct access to data/ directory ───────────────────
+# ── Routing & directory protection ───────────────────────────
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /
 
+    # Block direct access to sensitive directories
     RewriteRule ^data/ - [F,L]
     RewriteRule ^includes/ - [F,L]
     RewriteRule ^sql/ - [F,L]
+
+    # Serve extensionless API calls → .php files
+    # e.g. api/auth/login → api/auth/login.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.php -f
+    RewriteRule ^(.+)$ $1.php [L,QSA]
 
     # Force HTTPS (enable on production)
     # RewriteCond %{HTTPS} off

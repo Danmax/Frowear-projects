@@ -113,7 +113,7 @@ $isAuthenticated = $platformUser !== null;
       <!-- Sidebar nav (desktop) -->
       <nav class="pf-sidebar" id="pfSidebar" aria-label="Platform navigation">
         <div class="pf-sidebar-brand">
-          <span class="brand-mark">FP</span>
+          <span class="brand-mark">FWP</span>
           <strong>Frowear</strong>
         </div>
 
@@ -160,7 +160,7 @@ $isAuthenticated = $platformUser !== null;
 
       <!-- Mobile header -->
       <header class="pf-mobile-header" aria-label="Mobile platform navigation">
-        <span class="brand-mark">FP</span>
+        <span class="brand-mark">FWP</span>
         <nav class="pf-mobile-nav" aria-label="Mobile navigation">
           <button class="pf-nav-item is-active" data-view="feed" type="button">Feed</button>
           <button class="pf-nav-item" data-view="messages" type="button">
