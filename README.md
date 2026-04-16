@@ -31,13 +31,16 @@ The public site is rendered by `index.php`. Admin authentication and content per
 │   └── bootstrap.php
 ├── index.php
 ├── script.js
+├── sql/
+│   └── platform_schema.sql
 ├── style.css
+├── webhook.php
 └── .env
 ```
 
 ## How It Works
 
-`index.php` loads the current site content from `data/content.json`. If that file does not exist yet, the app uses the defaults defined in `includes/bootstrap.php`.
+`index.php` now prefers MySQL for site content storage. If the database is unavailable, the app falls back to `data/content.json`. If neither exists yet, it uses the defaults defined in `includes/bootstrap.php`.
 
 `admin.php` handles:
 
@@ -48,26 +51,50 @@ The public site is rendered by `index.php`. Admin authentication and content per
 
 The browser never gets the real `FW_ADMIN_KEY`. PHP reads it from the server environment or `.env` file and verifies login on the server.
 
+`webhook.php` handles inbound webhooks with a shared secret. Valid requests are appended to `data/webhook-requests.log` as JSON lines.
+
+`sql/platform_schema.sql` provides a MySQL-ready schema for:
+
+- `site_content` for the current admin-managed content store
+- companies
+- talent profiles
+- skills
+- opportunities
+- applications
+- project assignments
+
 ## Hostinger Setup
 
 1. Upload the project files to your hosting folder.
 2. Make sure `index.php` is the page being loaded.
 3. Create a `.env` file in the project root.
-4. Add your admin key:
+4. Add your keys and database credentials:
 
 ```env
 FW_ADMIN_KEY=replace-with-a-strong-secret-key
+FW_WEBHOOK_SECRET=replace-with-a-strong-webhook-secret
+DB_HOST=localhost
+DB_NAME=your_database_name
+DB_USER=your_database_user
+DB_PASS=your_database_password
 ```
 
-5. Make sure the `data/` folder is writable by PHP.
-6. Open the site and use the `Admin` button to log in.
+5. Import `sql/platform_schema.sql` into your MySQL database with phpMyAdmin.
+6. Make sure the `data/` folder is writable by PHP for fallback storage and webhook logs.
+7. Open the site and use the `Admin` button to log in.
 
 ## Content Storage
 
-Saved admin changes are written to:
+Saved admin changes are written to MySQL when database access is configured:
 
 ```text
-data/content.json
+site_content
+```
+
+Webhook requests are appended to:
+
+```text
+data/webhook-requests.log
 ```
 
 That means:
@@ -75,6 +102,7 @@ That means:
 - changes persist after reload
 - changes persist across devices
 - changes do not depend on browser local storage
+- changes use MySQL first, with JSON file fallback if the DB is unavailable
 
 ## Local Development
 
@@ -97,8 +125,37 @@ These checks were used during development:
 ```bash
 php -l index.php
 php -l admin.php
+php -l webhook.php
 php -l includes/bootstrap.php
 node --check script.js
+```
+
+## Webhook Listener
+
+Endpoint:
+
+```text
+/webhook.php
+```
+
+Authentication:
+
+- Set `FW_WEBHOOK_SECRET` in `.env`
+- Send the same value in the `X-Webhook-Secret` header
+
+Accepted methods:
+
+- `GET` for a simple readiness check
+- `POST` for webhook delivery
+
+Example:
+
+```bash
+curl -X POST https://your-domain.com/webhook.php \
+  -H "Content-Type: application/json" \
+  -H "X-Webhook-Secret: your-webhook-secret" \
+  -H "X-Webhook-Event: project.updated" \
+  -d '{"project":"Frowear","status":"updated"}'
 ```
 
 ## Notes

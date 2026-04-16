@@ -1,0 +1,134 @@
+CREATE TABLE site_content (
+  content_key VARCHAR(120) NOT NULL PRIMARY KEY,
+  content_json LONGTEXT NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE companies (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(160) NOT NULL,
+  slug VARCHAR(180) NOT NULL UNIQUE,
+  industry VARCHAR(160) DEFAULT NULL,
+  location VARCHAR(160) DEFAULT NULL,
+  bio TEXT DEFAULT NULL,
+  website_url VARCHAR(255) DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE talent_profiles (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(160) NOT NULL,
+  slug VARCHAR(180) NOT NULL UNIQUE,
+  role_title VARCHAR(160) DEFAULT NULL,
+  bio TEXT DEFAULT NULL,
+  availability VARCHAR(160) DEFAULT NULL,
+  email VARCHAR(190) DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE skills (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(160) NOT NULL UNIQUE,
+  category VARCHAR(120) DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE company_skills (
+  company_id BIGINT UNSIGNED NOT NULL,
+  skill_id BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (company_id, skill_id),
+  CONSTRAINT fk_company_skills_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
+  CONSTRAINT fk_company_skills_skill FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
+);
+
+CREATE TABLE talent_skills (
+  talent_id BIGINT UNSIGNED NOT NULL,
+  skill_id BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (talent_id, skill_id),
+  CONSTRAINT fk_talent_skills_talent FOREIGN KEY (talent_id) REFERENCES talent_profiles(id) ON DELETE CASCADE,
+  CONSTRAINT fk_talent_skills_skill FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
+);
+
+CREATE TABLE projects (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  company_id BIGINT UNSIGNED DEFAULT NULL,
+  title VARCHAR(180) NOT NULL,
+  slug VARCHAR(200) NOT NULL UNIQUE,
+  category VARCHAR(120) NOT NULL,
+  status_label VARCHAR(120) DEFAULT NULL,
+  stage_label VARCHAR(120) DEFAULT NULL,
+  summary TEXT DEFAULT NULL,
+  image_url VARCHAR(255) DEFAULT NULL,
+  image_alt VARCHAR(255) DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_projects_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
+);
+
+CREATE TABLE project_highlights (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  project_id BIGINT UNSIGNED NOT NULL,
+  highlight_text VARCHAR(255) NOT NULL,
+  sort_order INT UNSIGNED DEFAULT 0,
+  CONSTRAINT fk_project_highlights_project FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
+
+CREATE TABLE project_skills (
+  project_id BIGINT UNSIGNED NOT NULL,
+  skill_id BIGINT UNSIGNED NOT NULL,
+  skill_usage ENUM('stack','need') NOT NULL DEFAULT 'need',
+  PRIMARY KEY (project_id, skill_id, skill_usage),
+  CONSTRAINT fk_project_skills_project FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+  CONSTRAINT fk_project_skills_skill FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
+);
+
+CREATE TABLE opportunities (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  company_id BIGINT UNSIGNED NOT NULL,
+  project_id BIGINT UNSIGNED DEFAULT NULL,
+  title VARCHAR(180) NOT NULL,
+  slug VARCHAR(200) NOT NULL UNIQUE,
+  summary TEXT DEFAULT NULL,
+  commitment_label VARCHAR(120) DEFAULT NULL,
+  focus_label VARCHAR(160) DEFAULT NULL,
+  apply_label VARCHAR(120) DEFAULT NULL,
+  status ENUM('open','paused','closed') NOT NULL DEFAULT 'open',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_opportunities_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
+  CONSTRAINT fk_opportunities_project FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL
+);
+
+CREATE TABLE opportunity_skills (
+  opportunity_id BIGINT UNSIGNED NOT NULL,
+  skill_id BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (opportunity_id, skill_id),
+  CONSTRAINT fk_opportunity_skills_opportunity FOREIGN KEY (opportunity_id) REFERENCES opportunities(id) ON DELETE CASCADE,
+  CONSTRAINT fk_opportunity_skills_skill FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
+);
+
+CREATE TABLE opportunity_applications (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  opportunity_id BIGINT UNSIGNED NOT NULL,
+  talent_id BIGINT UNSIGNED NOT NULL,
+  application_note TEXT DEFAULT NULL,
+  status ENUM('submitted','reviewing','accepted','declined') NOT NULL DEFAULT 'submitted',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_applications_opportunity FOREIGN KEY (opportunity_id) REFERENCES opportunities(id) ON DELETE CASCADE,
+  CONSTRAINT fk_applications_talent FOREIGN KEY (talent_id) REFERENCES talent_profiles(id) ON DELETE CASCADE
+);
+
+CREATE TABLE project_assignments (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  project_id BIGINT UNSIGNED NOT NULL,
+  talent_id BIGINT UNSIGNED NOT NULL,
+  assignment_role VARCHAR(160) DEFAULT NULL,
+  status ENUM('invited','active','completed') NOT NULL DEFAULT 'invited',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_assignments_project FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+  CONSTRAINT fk_assignments_talent FOREIGN KEY (talent_id) REFERENCES talent_profiles(id) ON DELETE CASCADE
+);

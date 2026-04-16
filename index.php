@@ -14,7 +14,7 @@ $isAdminAuthenticated = is_admin_authenticated();
     <title>Frowear Productions | UI Engineering Portfolio</title>
     <meta
       name="description"
-      content="Frowear Productions builds high-tech websites, full systems, APIs, integrations, and special digital projects with a design-led engineering approach."
+      content="Frowear Productions builds high-tech websites, complete systems, APIs, integrations, opportunity networks, and talent-ready project platforms."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -45,8 +45,9 @@ $isAdminAuthenticated = is_admin_authenticated();
         <a href="#company">Company</a>
         <a href="#work">Projects</a>
         <a href="#services">Services</a>
-        <a href="#skills">Skills</a>
         <a href="#opportunities">Opportunities</a>
+        <a href="#companies">Companies</a>
+        <a href="#talent">Talent</a>
         <a href="#branding">Branding</a>
         <a href="#quote">Free Quote</a>
       </nav>
@@ -99,11 +100,11 @@ $isAdminAuthenticated = is_admin_authenticated();
         <div class="section-header">
           <div>
             <p class="eyebrow">Project Gallery</p>
-            <h2>Selected UI and engineering work</h2>
+            <h2>Dynamic project cards with teams, needs, and stack visibility</h2>
           </div>
           <p class="section-copy">
-            Websites, systems, APIs, integrations, and special builds rendered from the same admin
-            model that drives the rest of the site.
+            Projects now surface status, company ownership, stack, required skills, and a stronger
+            card layout so the gallery reads like live work instead of flat placeholders.
           </p>
         </div>
 
@@ -118,8 +119,8 @@ $isAdminAuthenticated = is_admin_authenticated();
             <h2>What customers can bring in</h2>
           </div>
           <p class="section-copy">
-            Every service lane is editable from the admin area and displayed directly on the public
-            site.
+            Service lanes remain editable in admin and now align directly with company profiles,
+            opportunities, and project creation.
           </p>
         </div>
 
@@ -133,8 +134,8 @@ $isAdminAuthenticated = is_admin_authenticated();
             <h2>Engineering and design strengths</h2>
           </div>
           <p class="section-copy">
-            Core skills define the type of execution customers can expect across interface work and
-            system delivery.
+            Skills can describe studio capabilities, company needs, and talent strengths in one shared
+            vocabulary.
           </p>
         </div>
 
@@ -145,15 +146,45 @@ $isAdminAuthenticated = is_admin_authenticated();
         <div class="section-header">
           <div>
             <p class="eyebrow">Opportunities</p>
-            <h2>Open ways to build together</h2>
+            <h2>Open opportunities ready for companies and talent</h2>
           </div>
           <p class="section-copy">
-            Opportunities can cover new contracts, pilot builds, partnerships, retainers, or custom
-            digital work.
+            Companies can list what they need, and individual talent can review openings before moving
+            into project work.
           </p>
         </div>
 
         <div class="opportunity-grid" id="opportunityGrid"></div>
+      </section>
+
+      <section class="section" id="companies">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Company Profiles</p>
+            <h2>Other companies can create profiles and list project needs</h2>
+          </div>
+          <p class="section-copy">
+            This section is shaped for a multi-company network where each organization can show its
+            profile, skills, and active opportunity pipeline.
+          </p>
+        </div>
+
+        <div class="network-grid" id="companiesGrid"></div>
+      </section>
+
+      <section class="section" id="talent">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Talent Profiles</p>
+            <h2>Individuals can present bio, skills, and project interest</h2>
+          </div>
+          <p class="section-copy">
+            Talent profiles are structured for bio, skills, availability, and opportunity alignment so
+            the platform can grow past a single company portfolio.
+          </p>
+        </div>
+
+        <div class="network-grid" id="talentGrid"></div>
       </section>
 
       <section class="section" id="branding">
@@ -163,8 +194,8 @@ $isAdminAuthenticated = is_admin_authenticated();
             <h2>Visible brand and theme options</h2>
           </div>
           <p class="section-copy">
-            Brand highlights, focus areas, and theme colors are editable from the admin drawer and
-            reflected live across the site.
+            Brand highlights, focus areas, and theme colors remain editable from the admin workspace
+            and reflected live across the site.
           </p>
         </div>
 
@@ -260,6 +291,7 @@ $isAdminAuthenticated = is_admin_authenticated();
           <button class="button button-secondary" id="adminReset" type="button">Reset Defaults</button>
           <button class="button button-secondary" id="adminLogout" type="button">Lock</button>
         </div>
+        <div class="admin-tablist" id="adminTabList" role="tablist" aria-label="Admin sections"></div>
         <div class="admin-sections" id="adminSections"></div>
         <p class="form-note" id="adminSaveNote" aria-live="polite"></p>
       </div>

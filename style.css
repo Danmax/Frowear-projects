@@ -243,6 +243,7 @@ h3 {
 .service-card p,
 .skill-card p,
 .opportunity-card p,
+.network-card p,
 .brand-card p,
 .form-note {
   color: var(--muted);
@@ -291,6 +292,7 @@ h3 {
 .service-grid,
 .skill-grid,
 .opportunity-grid,
+.network-grid,
 .branding-layout,
 .theme-swatches,
 .quote-layout {
@@ -312,6 +314,7 @@ h3 {
 .service-card,
 .skill-card,
 .opportunity-card,
+.network-card,
 .brand-card,
 .quote-form,
 .admin-panel {
@@ -349,6 +352,7 @@ h3 {
 .service-card,
 .skill-card,
 .opportunity-card,
+.network-card,
 .brand-card {
   padding: 1.15rem;
 }
@@ -457,11 +461,14 @@ h3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.opportunity-grid {
+.opportunity-grid,
+.network-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .project-card {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   transition: transform 180ms ease, border-color 180ms ease;
 }
@@ -481,6 +488,9 @@ h3 {
 }
 
 .project-body {
+  display: grid;
+  align-content: start;
+  gap: 0.9rem;
   padding: 1.2rem;
 }
 
@@ -512,6 +522,30 @@ h3 {
 .quote-points li,
 .opportunity-meta li {
   margin: 0.45rem 0;
+}
+
+.project-company {
+  margin: 0;
+  color: var(--cyan);
+  font-size: 0.92rem;
+}
+
+.project-tag-group {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.project-tag-group strong {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.card-action-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 1rem;
 }
 
 .branding-layout,
@@ -615,7 +649,7 @@ h3 {
   top: 0;
   right: 0;
   z-index: 40;
-  width: min(540px, 100vw);
+  width: min(860px, 96vw);
   height: 100vh;
   padding: 1.25rem;
   overflow-y: auto;
@@ -661,14 +695,45 @@ h3 {
 }
 
 .admin-sections {
-  display: grid;
-  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.admin-tablist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.admin-tab {
+  padding: 0.75rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+}
+
+.admin-tab:hover,
+.admin-tab.is-active {
+  border-color: var(--cyan);
+  background: rgba(75, 231, 255, 0.14);
+}
+
+.admin-pane {
+  display: block;
+}
+
+.admin-pane.is-hidden {
+  display: none;
+}
+
+.admin-sections {
   margin-top: 1rem;
 }
 
 .admin-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.85rem;
 }
 
@@ -713,8 +778,13 @@ h3 {
 
   .company-layout,
   .branding-layout,
-  .quote-layout {
+  .quote-layout,
+  .network-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -769,6 +839,7 @@ h3 {
   .service-grid,
   .skill-grid,
   .opportunity-grid,
+  .network-grid,
   .company-facts,
   .quote-form,
   .admin-grid {

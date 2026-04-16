@@ -5,6 +5,7 @@ const siteState = structuredClone(defaultContent);
 let adminDraft = structuredClone(siteState);
 let activeProjectFilter = "all";
 let isAdminUnlocked = Boolean(window.__FW_ADMIN_AUTHENTICATED__);
+let activeAdminTab = "companyInfo";
 
 const menuToggle = document.querySelector(".menu-toggle");
 const siteNav = document.querySelector(".site-nav");
@@ -17,6 +18,7 @@ const adminEditor = document.querySelector("#adminEditor");
 const adminLoginForm = document.querySelector("#adminLoginForm");
 const adminKeyInput = document.querySelector("#adminKeyInput");
 const adminAuthNote = document.querySelector("#adminAuthNote");
+const adminTabList = document.querySelector("#adminTabList");
 const adminSections = document.querySelector("#adminSections");
 const adminSave = document.querySelector("#adminSave");
 const adminReset = document.querySelector("#adminReset");
@@ -62,6 +64,136 @@ const themeFieldMap = {
   pink: "--pink",
 };
 
+const adminTabConfig = [
+  {
+    key: "companyInfo",
+    label: "Company",
+    render: () =>
+      renderObjectSection({
+        title: "Company Info",
+        section: "companyInfo",
+        fields: [
+          { field: "name", label: "Company name" },
+          { field: "brandMark", label: "Brand mark" },
+          { field: "tagline", label: "Tagline" },
+          { field: "heroEyebrow", label: "Hero eyebrow" },
+          { field: "heroTitle", label: "Hero title", type: "textarea" },
+          { field: "heroDescription", label: "Hero description", type: "textarea" },
+          { field: "primaryCtaLabel", label: "Primary CTA label" },
+          { field: "secondaryCtaLabel", label: "Secondary CTA label" },
+          { field: "companyHeading", label: "Company heading" },
+          { field: "companyIntro", label: "Company intro", type: "textarea" },
+          { field: "companyNarrative", label: "Company narrative", type: "textarea" },
+          { field: "studioLabel", label: "Studio label" },
+          { field: "responseWindow", label: "Quote response line" },
+          { field: "location", label: "Location" },
+          { field: "email", label: "Email" },
+        ],
+      }),
+  },
+  {
+    key: "projects",
+    label: "Projects",
+    render: () =>
+      renderCollectionSection("Projects", "projects", [
+        { field: "title", label: "Title" },
+        { field: "category", label: "Category" },
+        { field: "status", label: "Status" },
+        { field: "company", label: "Company" },
+        { field: "stage", label: "Stage" },
+        { field: "image", label: "Image URL" },
+        { field: "alt", label: "Image alt text" },
+        { field: "summary", label: "Summary", type: "textarea" },
+        { field: "points", label: "Bullet points", type: "list" },
+        { field: "stack", label: "Stack tags", type: "list" },
+        { field: "needs", label: "Needed skills", type: "list" },
+      ]),
+  },
+  {
+    key: "services",
+    label: "Services",
+    render: () =>
+      renderCollectionSection("Services", "services", [
+        { field: "title", label: "Title" },
+        { field: "description", label: "Description", type: "textarea" },
+      ]),
+  },
+  {
+    key: "skills",
+    label: "Skills",
+    render: () =>
+      renderCollectionSection("Skills", "skills", [
+        { field: "name", label: "Skill name" },
+        { field: "summary", label: "Summary", type: "textarea" },
+      ]),
+  },
+  {
+    key: "opportunities",
+    label: "Opportunities",
+    render: () =>
+      renderCollectionSection("Opportunities", "opportunities", [
+        { field: "title", label: "Title" },
+        { field: "company", label: "Company" },
+        { field: "summary", label: "Summary", type: "textarea" },
+        { field: "commitment", label: "Commitment" },
+        { field: "focus", label: "Focus" },
+        { field: "skills", label: "Skills", type: "list" },
+        { field: "applyLabel", label: "Apply label" },
+      ]),
+  },
+  {
+    key: "companies",
+    label: "Companies",
+    render: () =>
+      renderCollectionSection("Companies", "companies", [
+        { field: "name", label: "Company name" },
+        { field: "industry", label: "Industry" },
+        { field: "location", label: "Location" },
+        { field: "bio", label: "Bio", type: "textarea" },
+        { field: "skills", label: "Skills", type: "list" },
+        { field: "opportunities", label: "Opportunity labels", type: "list" },
+      ]),
+  },
+  {
+    key: "talent",
+    label: "Talent",
+    render: () =>
+      renderCollectionSection("Talent", "talent", [
+        { field: "name", label: "Name" },
+        { field: "role", label: "Role" },
+        { field: "bio", label: "Bio", type: "textarea" },
+        { field: "skills", label: "Skills", type: "list" },
+        { field: "availability", label: "Availability" },
+        { field: "interests", label: "Interests", type: "list" },
+      ]),
+  },
+  {
+    key: "branding",
+    label: "Branding",
+    render: () =>
+      renderObjectSection({
+        title: "Branding",
+        section: "branding",
+        fields: [
+          { field: "positioning", label: "Positioning", type: "textarea" },
+          { field: "voice", label: "Voice", type: "textarea" },
+          { field: "focusAreas", label: "Focus areas", type: "list" },
+          { field: "highlights", label: "Brand highlights", type: "list" },
+        ],
+      }),
+  },
+  {
+    key: "theme",
+    label: "Theme",
+    render: () =>
+      renderObjectSection({
+        title: "Theme",
+        section: "theme",
+        fields: Object.keys(siteState.theme).map((field) => ({ field, label: field })),
+      }),
+  },
+];
+
 function getValue(path) {
   return path.reduce((accumulator, key) => accumulator?.[key], siteState);
 }
@@ -87,7 +219,7 @@ function renderHeroMetrics() {
   const metrics = [
     { title: siteState.services[0]?.title || "Web + UI", detail: siteState.services[0]?.description || "" },
     { title: siteState.services[1]?.title || "Systems", detail: siteState.services[1]?.description || "" },
-    { title: siteState.services[2]?.title || "APIs", detail: siteState.services[2]?.description || "" },
+    { title: siteState.services[5]?.title || "Talent Platforms", detail: siteState.services[5]?.description || "" },
   ];
 
   document.querySelector("#heroMetrics").innerHTML = metrics
@@ -121,7 +253,7 @@ function renderCompanyFacts() {
     { label: "Location", value: siteState.companyInfo.location },
     { label: "Contact", value: siteState.companyInfo.email },
     { label: "Response", value: siteState.companyInfo.responseWindow },
-    { label: "Theme", value: `${siteState.theme.bg} / ${siteState.theme.cyan}` },
+    { label: "Companies", value: `${siteState.companies.length} active profiles` },
   ];
 
   document.querySelector("#companyFacts").innerHTML = facts
@@ -181,12 +313,26 @@ function renderProjects() {
             <div class="project-meta">
               <span>${escapeHtml(labelFromCategory(project.category))}</span>
               <span>${escapeHtml(project.status)}</span>
+              <span>${escapeHtml(project.stage || "")}</span>
             </div>
             <h3>${escapeHtml(project.title)}</h3>
+            <p class="project-company">${escapeHtml(project.company || "")}</p>
             <p>${escapeHtml(project.summary)}</p>
             <ul class="project-points">
-              ${project.points.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}
+              ${(project.points || []).map((point) => `<li>${escapeHtml(point)}</li>`).join("")}
             </ul>
+            <div class="project-tag-group">
+              <strong>Stack</strong>
+              <div class="chip-cloud">
+                ${(project.stack || []).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
+              </div>
+            </div>
+            <div class="project-tag-group">
+              <strong>Needed</strong>
+              <div class="chip-cloud">
+                ${(project.needs || []).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
+              </div>
+            </div>
           </div>
         </article>
       `;
@@ -227,10 +373,71 @@ function renderOpportunities() {
         <article class="opportunity-card">
           <p class="company-kicker">${escapeHtml(item.commitment)}</p>
           <h3>${escapeHtml(item.title)}</h3>
+          <p class="project-company">${escapeHtml(item.company || "")}</p>
           <p>${escapeHtml(item.summary)}</p>
           <ul class="opportunity-meta">
             <li>${escapeHtml(item.focus)}</li>
           </ul>
+          <div class="chip-cloud">
+            ${(item.skills || []).map((skill) => `<div class="focus-chip">${escapeHtml(skill)}</div>`).join("")}
+          </div>
+          <div class="card-action-row">
+            <button class="ghost-button" type="button">${escapeHtml(item.applyLabel || "Apply")}</button>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderCompanies() {
+  document.querySelector("#companiesGrid").innerHTML = siteState.companies
+    .map(
+      (company) => `
+        <article class="network-card">
+          <p class="company-kicker">${escapeHtml(company.industry)}</p>
+          <h3>${escapeHtml(company.name)}</h3>
+          <p class="project-company">${escapeHtml(company.location)}</p>
+          <p>${escapeHtml(company.bio)}</p>
+          <div class="project-tag-group">
+            <strong>Skills</strong>
+            <div class="chip-cloud">
+              ${(company.skills || []).map((skill) => `<div class="focus-chip">${escapeHtml(skill)}</div>`).join("")}
+            </div>
+          </div>
+          <div class="project-tag-group">
+            <strong>Open work</strong>
+            <div class="chip-cloud">
+              ${(company.opportunities || []).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
+            </div>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderTalent() {
+  document.querySelector("#talentGrid").innerHTML = siteState.talent
+    .map(
+      (profile) => `
+        <article class="network-card">
+          <p class="company-kicker">${escapeHtml(profile.role)}</p>
+          <h3>${escapeHtml(profile.name)}</h3>
+          <p class="project-company">${escapeHtml(profile.availability)}</p>
+          <p>${escapeHtml(profile.bio)}</p>
+          <div class="project-tag-group">
+            <strong>Skills</strong>
+            <div class="chip-cloud">
+              ${(profile.skills || []).map((skill) => `<div class="focus-chip">${escapeHtml(skill)}</div>`).join("")}
+            </div>
+          </div>
+          <div class="project-tag-group">
+            <strong>Interested in</strong>
+            <div class="chip-cloud">
+              ${(profile.interests || []).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
+            </div>
+          </div>
         </article>
       `
     )
@@ -293,15 +500,15 @@ function renderSite() {
   renderServices();
   renderSkills();
   renderOpportunities();
+  renderCompanies();
+  renderTalent();
   renderBranding();
   renderQuoteOptions();
 }
 
 function setActiveLink() {
   const offset = window.scrollY + 160;
-  const currentSection = sections.find((section) => {
-    return offset >= section.offsetTop && offset < section.offsetTop + section.offsetHeight;
-  });
+  const currentSection = sections.find((section) => offset >= section.offsetTop && offset < section.offsetTop + section.offsetHeight);
 
   navLinks.forEach((link) => {
     const isActive = currentSection && link.getAttribute("href") === `#${currentSection.id}`;
@@ -329,67 +536,36 @@ function syncAdminVisibility() {
 }
 
 function renderAdminEditor() {
-  adminSections.innerHTML = `
-    ${renderObjectSection({
-      title: "Company Info",
-      section: "companyInfo",
-      fields: [
-        { field: "name", label: "Company name" },
-        { field: "brandMark", label: "Brand mark" },
-        { field: "tagline", label: "Tagline" },
-        { field: "heroEyebrow", label: "Hero eyebrow" },
-        { field: "heroTitle", label: "Hero title", type: "textarea" },
-        { field: "heroDescription", label: "Hero description", type: "textarea" },
-        { field: "primaryCtaLabel", label: "Primary CTA label" },
-        { field: "secondaryCtaLabel", label: "Secondary CTA label" },
-        { field: "companyHeading", label: "Company heading" },
-        { field: "companyIntro", label: "Company intro", type: "textarea" },
-        { field: "companyNarrative", label: "Company narrative", type: "textarea" },
-        { field: "studioLabel", label: "Studio label" },
-        { field: "responseWindow", label: "Quote response line" },
-        { field: "location", label: "Location" },
-        { field: "email", label: "Email" },
-      ],
-    })}
-    ${renderObjectSection({
-      title: "Branding",
-      section: "branding",
-      fields: [
-        { field: "positioning", label: "Positioning", type: "textarea" },
-        { field: "voice", label: "Voice", type: "textarea" },
-        { field: "focusAreas", label: "Focus areas", type: "list" },
-        { field: "highlights", label: "Brand highlights", type: "list" },
-      ],
-    })}
-    ${renderObjectSection({
-      title: "Theme",
-      section: "theme",
-      fields: Object.keys(siteState.theme).map((field) => ({ field, label: field })),
-    })}
-    ${renderCollectionSection("Projects", "projects", [
-      { field: "title", label: "Title" },
-      { field: "category", label: "Category" },
-      { field: "status", label: "Status" },
-      { field: "image", label: "Image URL" },
-      { field: "alt", label: "Image alt text" },
-      { field: "summary", label: "Summary", type: "textarea" },
-      { field: "points", label: "Bullet points", type: "list" },
-    ])}
-    ${renderCollectionSection("Services", "services", [
-      { field: "title", label: "Title" },
-      { field: "description", label: "Description", type: "textarea" },
-    ])}
-    ${renderCollectionSection("Skills", "skills", [
-      { field: "name", label: "Skill name" },
-      { field: "summary", label: "Summary", type: "textarea" },
-    ])}
-    ${renderCollectionSection("Opportunities", "opportunities", [
-      { field: "title", label: "Title" },
-      { field: "summary", label: "Summary", type: "textarea" },
-      { field: "commitment", label: "Commitment" },
-      { field: "focus", label: "Focus" },
-    ])}
-  `;
+  const activeTabExists = adminTabConfig.some((tab) => tab.key === activeAdminTab);
+  if (!activeTabExists) {
+    activeAdminTab = adminTabConfig[0].key;
+  }
+
+  adminTabList.innerHTML = adminTabConfig
+    .map(
+      (tab) => `
+        <button
+          class="admin-tab${tab.key === activeAdminTab ? " is-active" : ""}"
+          type="button"
+          role="tab"
+          data-admin-tab="${escapeAttribute(tab.key)}"
+          aria-selected="${tab.key === activeAdminTab ? "true" : "false"}"
+        >
+          ${escapeHtml(tab.label)}
+        </button>
+      `
+    )
+    .join("");
+
+  adminSections.innerHTML = adminTabConfig
+    .map(
+      (tab) => `
+        <section class="admin-pane${tab.key === activeAdminTab ? "" : " is-hidden"}" data-admin-pane="${escapeAttribute(tab.key)}">
+          ${tab.render()}
+        </section>
+      `
+    )
+    .join("");
 }
 
 function renderObjectSection({ title, section, fields }) {
@@ -484,10 +660,7 @@ function updateDraftField(section, field, value, index) {
   if (index === null || index === undefined || index === "") {
     const current = adminDraft[section][field];
     adminDraft[section][field] = Array.isArray(current)
-      ? value
-          .split("\n")
-          .map((item) => item.trim())
-          .filter(Boolean)
+      ? value.split("\n").map((item) => item.trim()).filter(Boolean)
       : value;
     return;
   }
@@ -498,10 +671,7 @@ function updateDraftField(section, field, value, index) {
   }
 
   target[field] = Array.isArray(target[field])
-    ? value
-        .split("\n")
-        .map((item) => item.trim())
-        .filter(Boolean)
+    ? value.split("\n").map((item) => item.trim()).filter(Boolean)
     : value;
 }
 
@@ -511,14 +681,42 @@ function addCollectionItem(collection) {
       title: "New Project",
       category: "websites",
       status: "New",
+      company: "",
+      stage: "",
       image: "",
       alt: "",
       summary: "",
       points: ["Add project detail"],
+      stack: ["Add stack"],
+      needs: ["Add needed skill"],
     },
     services: { title: "New Service", description: "" },
     skills: { name: "New Skill", summary: "" },
-    opportunities: { title: "New Opportunity", summary: "", commitment: "", focus: "" },
+    opportunities: {
+      title: "New Opportunity",
+      company: "",
+      summary: "",
+      commitment: "",
+      focus: "",
+      skills: ["Add skill"],
+      applyLabel: "Apply",
+    },
+    companies: {
+      name: "New Company",
+      industry: "",
+      location: "",
+      bio: "",
+      skills: ["Add company skill"],
+      opportunities: ["Add opportunity"],
+    },
+    talent: {
+      name: "New Talent",
+      role: "",
+      bio: "",
+      skills: ["Add skill"],
+      availability: "",
+      interests: ["Add interest"],
+    },
   };
 
   adminDraft[collection].push(structuredClone(templates[collection]));
@@ -613,6 +811,16 @@ adminLoginForm?.addEventListener("submit", async (event) => {
   } catch (error) {
     adminAuthNote.textContent = error.message;
   }
+});
+
+adminTabList?.addEventListener("click", (event) => {
+  const tab = event.target.closest("[data-admin-tab]");
+  if (!tab) {
+    return;
+  }
+
+  activeAdminTab = tab.dataset.adminTab;
+  renderAdminEditor();
 });
 
 adminSections?.addEventListener("input", (event) => {
