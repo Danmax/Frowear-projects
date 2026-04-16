@@ -31,7 +31,7 @@ if ($method === 'GET') {
         [$postId]
     );
 
-    json_response(['ok' => true, 'data' => ['comments' => $comments]]);
+    json_response(['ok' => true, 'data' => $comments]);
 }
 
 // ── POST: add a comment ──────────────────────────────────────────────────────
@@ -108,4 +108,4 @@ $comment = db_select_one(
     [$newId]
 );
 
-json_response(['ok' => true, 'data' => ['comment' => $comment]], 201);
+json_response(['ok' => true, 'comment' => $comment], 201);

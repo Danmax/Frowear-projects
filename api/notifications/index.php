@@ -25,4 +25,4 @@ $result = db_paginate($countSql, $dataSql, [$userId], $page, 30);
 
 $result['unread_count'] = fw_unread_count($userId);
 
-json_response(['ok' => true, 'data' => $result]);
+json_response(array_merge(['ok' => true], $result));

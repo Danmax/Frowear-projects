@@ -41,4 +41,4 @@ $result = db_paginate($countSql, $dataSql, [$convId], $page, 50);
 // Reverse the page of messages so they are in chronological (ascending) order for display.
 $result['data'] = array_reverse($result['data']);
 
-json_response(['ok' => true, 'data' => $result]);
+json_response(array_merge(['ok' => true], $result));

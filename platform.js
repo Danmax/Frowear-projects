@@ -357,7 +357,7 @@
       if (typeKey) params.set('type', typeKey);
     }
 
-    const result = await apiFetch('feed?' + params.toString());
+    const result = await apiFetch('feed/posts?' + params.toString());
     if (!result.ok) {
       if (reset) pfFeedList.innerHTML = '<div class="pf-empty"><strong>Could not load feed.</strong><span>The feed API is not yet available.</span></div>';
       return;
@@ -446,7 +446,7 @@
     const isLiked = btn.classList.contains('is-active');
     btn.disabled = true;
 
-    const result = await apiPost('feed/' + postId + '/like', { liked: !isLiked });
+    const result = await apiPost('feed/react', { post_id: postId, reaction: 'like' });
     if (result.ok) {
       btn.classList.toggle('is-active', !isLiked);
       const count = btn.querySelector('span');
@@ -460,7 +460,7 @@
   async function loadComments(postId, container) {
     if (!container) return;
     container.innerHTML = '<div class="pf-loading" style="padding:0.75rem 0;">Loading…</div>';
-    const result = await apiFetch('feed/' + postId + '/comments');
+    const result = await apiFetch('feed/comments?post_id=' + postId);
     container.innerHTML = '';
     if (!result.ok || !Array.isArray(result.data.data)) return;
     result.data.data.forEach(c => container.appendChild(buildComment(c)));
@@ -485,7 +485,7 @@
 
   async function submitComment(postId, body, card, input) {
     if (!body) return;
-    const result = await apiPost('feed/' + postId + '/comments', { body });
+    const result = await apiPost('feed/comments', { post_id: postId, body });
     if (result.ok && result.data.comment) {
       const section = document.getElementById('pf-comments-' + postId);
       const list = section ? section.querySelector('.pf-comments-list') : null;
@@ -505,7 +505,7 @@
       btn.textContent = 'Posting…';
 
       const fd = new FormData(pfPostForm);
-      const result = await apiPost('feed', {
+      const result = await apiPost('feed/posts', {
         body: fd.get('body'),
         post_type: fd.get('post_type'),
         visibility: fd.get('visibility'),
@@ -618,7 +618,7 @@
         const body = input.value.trim();
         if (!body) return;
         input.value = '';
-        const result = await apiPost('messages/conversations/' + convo.id + '/messages', { body });
+        const result = await apiPost('messages/send', { conversation_id: convo.id, body });
         if (result.ok && result.data.message) {
           appendMessage(result.data.message, true);
         }
@@ -631,7 +631,7 @@
     if (!container) return;
     container.innerHTML = '<div class="pf-loading">Loading…</div>';
 
-    const result = await apiFetch('messages/conversations/' + convoId + '/messages');
+    const result = await apiFetch('messages/thread?conversation_id=' + convoId);
     container.innerHTML = '';
 
     if (!result.ok || !Array.isArray(result.data.data)) {
@@ -913,7 +913,7 @@
   }
 
   async function markNotifRead(id, item) {
-    const result = await apiPost('notifications/' + id + '/read', {});
+    const result = await apiPost('notifications/read', { notification_id: id });
     if (result.ok) {
       item.classList.remove('is-unread');
       updateNotifBadge(document.querySelectorAll('.pf-notif-item.is-unread').length);
@@ -923,7 +923,7 @@
   async function initMarkAllRead() {
     if (!pfMarkAllRead) return;
     pfMarkAllRead.addEventListener('click', async () => {
-      const result = await apiPost('notifications/read-all', {});
+      const result = await apiPost('notifications/read', {});
       if (result.ok) {
         document.querySelectorAll('.pf-notif-item.is-unread').forEach(i => i.classList.remove('is-unread'));
         updateNotifBadge(0);

@@ -28,7 +28,7 @@ if ($method === 'GET') {
              ORDER BY b.created_at DESC',
             [$userId]
         );
-        json_response(['ok' => true, 'data' => ['bids' => $bids]]);
+        json_response(['ok' => true, 'data' => $bids]);
     }
 
     if ($tab === 'contracts') {
@@ -43,7 +43,7 @@ if ($method === 'GET') {
              ORDER BY c.created_at DESC',
             [$userId, $userId]
         );
-        json_response(['ok' => true, 'data' => ['contracts' => $contracts]]);
+        json_response(['ok' => true, 'data' => $contracts]);
     }
 
     // Default: received bids.
@@ -54,7 +54,7 @@ if ($method === 'GET') {
          ORDER BY b.created_at DESC',
         []
     );
-    json_response(['ok' => true, 'data' => ['bids' => $bids]]);
+    json_response(['ok' => true, 'data' => $bids]);
 }
 
 // ── POST: place a bid ────────────────────────────────────────────────────────
@@ -129,4 +129,4 @@ try {
 
 $bid = db_select_one('SELECT * FROM bids WHERE id = ?', [$bidId]);
 
-json_response(['ok' => true, 'data' => ['bid' => $bid]], 201);
+json_response(['ok' => true, 'bid' => $bid], 201);

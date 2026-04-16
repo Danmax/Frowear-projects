@@ -25,9 +25,7 @@ $unreadMessages = (int) db_select_one(
 )['cnt'] ?? 0;
 
 json_response([
-    'ok'   => true,
-    'data' => [
-        'notifications' => $unreadNotifications,
-        'messages'      => $unreadMessages,
-    ],
+    'ok'                   => true,
+    'unread_notifications' => $unreadNotifications,
+    'unread_messages'      => $unreadMessages,
 ]);

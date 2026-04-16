@@ -27,7 +27,7 @@ if ($method === 'GET') {
 
     if ($type === 'all') {
         $countSql = 'SELECT COUNT(*) FROM feed_posts WHERE deleted_at IS NULL';
-        $dataSql  = 'SELECT fp.*, u.display_name AS author_name, u.avatar_url AS author_avatar
+        $dataSql  = 'SELECT fp.*, u.display_name AS display_name, u.avatar_url AS avatar_url
                      FROM feed_posts fp
                      JOIN users u ON u.id = fp.author_user_id
                      WHERE fp.deleted_at IS NULL
@@ -35,7 +35,7 @@ if ($method === 'GET') {
         $params = [];
     } else {
         $countSql = 'SELECT COUNT(*) FROM feed_posts WHERE deleted_at IS NULL AND post_type = ?';
-        $dataSql  = 'SELECT fp.*, u.display_name AS author_name, u.avatar_url AS author_avatar
+        $dataSql  = 'SELECT fp.*, u.display_name AS display_name, u.avatar_url AS avatar_url
                      FROM feed_posts fp
                      JOIN users u ON u.id = fp.author_user_id
                      WHERE fp.deleted_at IS NULL AND fp.post_type = ?
@@ -45,7 +45,7 @@ if ($method === 'GET') {
 
     $result = db_paginate($countSql, $dataSql, $params, $page, 20);
 
-    json_response(['ok' => true, 'data' => $result]);
+    json_response(array_merge(['ok' => true], $result));
 }
 
 // ── POST: create post ────────────────────────────────────────────────────────
@@ -75,11 +75,11 @@ $newId = db_insert(
 );
 
 $post = db_select_one(
-    'SELECT fp.*, u.display_name AS author_name, u.avatar_url AS author_avatar
+    'SELECT fp.*, u.display_name AS display_name, u.avatar_url AS avatar_url
      FROM feed_posts fp
      JOIN users u ON u.id = fp.author_user_id
      WHERE fp.id = ?',
     [$newId]
 );
 
-json_response(['ok' => true, 'data' => ['post' => $post]], 201);
+json_response(['ok' => true, 'post' => $post], 201);

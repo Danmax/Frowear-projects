@@ -42,7 +42,7 @@ if ($method === 'GET') {
         [$userId, $userId, $userId, $userId]
     );
 
-    json_response(['ok' => true, 'data' => ['conversations' => $conversations]]);
+    json_response(['ok' => true, 'conversations' => $conversations]);
 }
 
 // ── POST: create or find a direct conversation ───────────────────────────────
@@ -85,7 +85,7 @@ if ($isGroup) {
         }
     }
 
-    json_response(['ok' => true, 'data' => ['conversation_id' => $convId]], 201);
+    json_response(['ok' => true, 'conversation_id' => $convId], 201);
 }
 
 // Direct conversation.
@@ -111,7 +111,7 @@ $existing = db_select_one(
 );
 
 if ($existing !== null) {
-    json_response(['ok' => true, 'data' => ['conversation_id' => (int) $existing['id']]]);
+    json_response(['ok' => true, 'conversation_id' => (int) $existing['id']]);
 }
 
 // Create new direct conversation.
@@ -129,4 +129,4 @@ db_insert(
     [$convId, $participantId]
 );
 
-json_response(['ok' => true, 'data' => ['conversation_id' => $convId]], 201);
+json_response(['ok' => true, 'conversation_id' => $convId], 201);
