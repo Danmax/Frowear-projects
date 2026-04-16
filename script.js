@@ -26,6 +26,38 @@ const adminLogout = document.querySelector("#adminLogout");
 const adminSaveNote = document.querySelector("#adminSaveNote");
 const quoteForm = document.querySelector("#quote-form");
 const formNote = document.querySelector("#form-note");
+const accessTabs = [...document.querySelectorAll(".access-tab")];
+const accessPanes = [...document.querySelectorAll(".access-pane")];
+const loginUiForm = document.querySelector("#login-ui-form");
+const loginUiNote = document.querySelector("#login-ui-note");
+const signupUiForm = document.querySelector("#signup-ui-form");
+const signupUiNote = document.querySelector("#signup-ui-note");
+const resetUiForm = document.querySelector("#reset-ui-form");
+const resetUiNote = document.querySelector("#reset-ui-note");
+const verifyUiForm = document.querySelector("#verify-ui-form");
+const verifyUiNote = document.querySelector("#verify-ui-note");
+const profileUiForm = document.querySelector("#profile-ui-form");
+const profileUiNote = document.querySelector("#profile-ui-note");
+const companyAccessForm = document.querySelector("#company-access-form");
+const companyAccessNote = document.querySelector("#company-access-note");
+const profilePreviewName = document.querySelector("#profilePreviewName");
+const profilePreviewRole = document.querySelector("#profilePreviewRole");
+const profilePreviewBio = document.querySelector("#profilePreviewBio");
+const profilePreviewStatus = document.querySelector("#profilePreviewStatus");
+const profilePreviewCity = document.querySelector("#profilePreviewCity");
+const profilePreviewNewsletter = document.querySelector("#profilePreviewNewsletter");
+const skillsManagerPreview = document.querySelector("#skillsManagerPreview");
+const profileLinksPreview = document.querySelector("#profileLinksPreview");
+const profilePreferencesPreview = document.querySelector("#profilePreferencesPreview");
+const resumeHtmlPreview = document.querySelector("#resumeHtmlPreview");
+const flowAccountStatus = document.querySelector("#flowAccountStatus");
+const flowAccountDetail = document.querySelector("#flowAccountDetail");
+const flowVerifyStatus = document.querySelector("#flowVerifyStatus");
+const flowVerifyDetail = document.querySelector("#flowVerifyDetail");
+const flowResetStatus = document.querySelector("#flowResetStatus");
+const flowResetDetail = document.querySelector("#flowResetDetail");
+const flowCompanyStatus = document.querySelector("#flowCompanyStatus");
+const flowCompanyDetail = document.querySelector("#flowCompanyDetail");
 
 const navLinks = [...document.querySelectorAll(".site-nav a")];
 const sections = [...document.querySelectorAll("main section[id]")];
@@ -101,7 +133,7 @@ const adminTabConfig = [
         { field: "status", label: "Status" },
         { field: "company", label: "Company" },
         { field: "stage", label: "Stage" },
-        { field: "image", label: "Image URL" },
+        { field: "image", label: "Image", type: "image" },
         { field: "alt", label: "Image alt text" },
         { field: "summary", label: "Summary", type: "textarea" },
         { field: "points", label: "Bullet points", type: "list" },
@@ -161,10 +193,16 @@ const adminTabConfig = [
       renderCollectionSection("Talent", "talent", [
         { field: "name", label: "Name" },
         { field: "role", label: "Role" },
+        { field: "city", label: "City" },
         { field: "bio", label: "Bio", type: "textarea" },
         { field: "skills", label: "Skills", type: "list" },
         { field: "availability", label: "Availability" },
+        { field: "profileStatus", label: "Profile status" },
+        { field: "newsletter", label: "Newsletter" },
         { field: "interests", label: "Interests", type: "list" },
+        { field: "preferences", label: "Preferences", type: "list" },
+        { field: "profileLinks", label: "Profile links", type: "list" },
+        { field: "resumeHtml", label: "Resume HTML", type: "textarea" },
       ]),
   },
   {
@@ -417,6 +455,10 @@ function renderCompanies() {
     .join("");
 }
 
+function compactProfileLine(profile) {
+  return [profile.availability, profile.city].filter(Boolean).join(" • ");
+}
+
 function renderTalent() {
   document.querySelector("#talentGrid").innerHTML = siteState.talent
     .map(
@@ -424,8 +466,13 @@ function renderTalent() {
         <article class="network-card">
           <p class="company-kicker">${escapeHtml(profile.role)}</p>
           <h3>${escapeHtml(profile.name)}</h3>
-          <p class="project-company">${escapeHtml(profile.availability)}</p>
+          <p class="project-company">${escapeHtml(compactProfileLine(profile))}</p>
           <p>${escapeHtml(profile.bio)}</p>
+          <div class="chip-cloud">
+            ${profile.profileStatus ? `<div class="focus-chip">${escapeHtml(profile.profileStatus)}</div>` : ""}
+            ${profile.newsletter ? `<div class="focus-chip">${escapeHtml(profile.newsletter)}</div>` : ""}
+            ${profile.resumeHtml ? `<div class="focus-chip">Resume Ready</div>` : ""}
+          </div>
           <div class="project-tag-group">
             <strong>Skills</strong>
             <div class="chip-cloud">
@@ -436,6 +483,18 @@ function renderTalent() {
             <strong>Interested in</strong>
             <div class="chip-cloud">
               ${(profile.interests || []).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
+            </div>
+          </div>
+          <div class="project-tag-group">
+            <strong>Preferences</strong>
+            <div class="chip-cloud">
+              ${(profile.preferences || []).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
+            </div>
+          </div>
+          <div class="project-tag-group">
+            <strong>Links</strong>
+            <div class="chip-cloud">
+              ${(profile.profileLinks || []).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
             </div>
           </div>
         </article>
@@ -630,6 +689,41 @@ function renderField(section, index, fieldConfig) {
     attributes.push(`data-index="${index}"`);
   }
 
+  if (fieldConfig.type === "image") {
+    const inputId = `img-file-${section}-${index ?? "obj"}-${fieldConfig.field}`;
+    return `
+      <div class="admin-field admin-image-field">
+        <label>
+          ${escapeHtml(fieldConfig.label)}
+          <input
+            type="text"
+            value="${escapeAttribute(value || "")}"
+            ${attributes.join(" ")}
+            class="admin-image-url"
+            placeholder="https://… or upload below"
+          />
+        </label>
+        <div class="admin-image-controls">
+          <input
+            type="file"
+            accept="image/*"
+            class="admin-image-file"
+            id="${escapeAttribute(inputId)}"
+            hidden
+            data-section="${escapeAttribute(section)}"
+            data-field="${escapeAttribute(fieldConfig.field)}"
+            ${index !== null ? `data-index="${index}"` : ""}
+          />
+          <label for="${escapeAttribute(inputId)}" class="ghost-button">Upload WebP</label>
+          <span class="admin-image-status"></span>
+        </div>
+        ${value
+          ? `<img class="admin-image-preview" src="${escapeAttribute(value)}" alt="" loading="lazy" />`
+          : `<div class="admin-image-placeholder">No image set</div>`}
+      </div>
+    `;
+  }
+
   if (fieldConfig.type === "textarea") {
     return `
       <label class="admin-field">
@@ -712,10 +806,16 @@ function addCollectionItem(collection) {
     talent: {
       name: "New Talent",
       role: "",
+      city: "",
       bio: "",
       skills: ["Add skill"],
       availability: "",
+      profileStatus: "Public",
+      newsletter: "Subscribed",
       interests: ["Add interest"],
+      preferences: ["Add preference"],
+      profileLinks: ["https://example.com"],
+      resumeHtml: "<section><h1>Resume</h1><p>Add summary</p></section>",
     },
   };
 
@@ -750,6 +850,178 @@ function lockAdminUI() {
   adminAuthNote.textContent = "";
   adminSaveNote.textContent = "";
   adminKeyInput.value = "";
+}
+
+function splitLines(value) {
+  return String(value || "")
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function renderChipList(target, values, fallback) {
+  if (!target) {
+    return;
+  }
+
+  if (!values.length) {
+    target.innerHTML = `<div class="focus-chip">${escapeHtml(fallback)}</div>`;
+    return;
+  }
+
+  target.innerHTML = values.map((value) => `<div class="focus-chip">${escapeHtml(value)}</div>`).join("");
+}
+
+function setMessageState(statusNode, detailNode, variant, status, detail) {
+  if (!statusNode || !detailNode) {
+    return;
+  }
+
+  statusNode.className = `message-state message-state--${variant}`;
+  statusNode.textContent = status;
+  detailNode.textContent = detail;
+}
+
+function renderProfileUiPreview() {
+  if (!profileUiForm) {
+    return;
+  }
+
+  const data = new FormData(profileUiForm);
+  const fullName = String(data.get("fullName") || "").trim() || "Your Name";
+  const role = String(data.get("role") || "").trim() || "Role";
+  const availability = String(data.get("availability") || "").trim();
+  const city = String(data.get("city") || "").trim();
+  const bio = String(data.get("bio") || "").trim() || "Profile summary updates as the form changes.";
+  const status = String(data.get("profileStatus") || "Public").trim();
+  const newsletterEnabled = profileUiForm.elements.newsletter?.checked;
+  const publicResume = profileUiForm.elements.publicResume?.checked;
+  const skills = splitLines(data.get("skills"));
+  const preferences = splitLines(data.get("preferences"));
+  const links = ["portfolio", "linkedin", "github"]
+    .map((field) => String(data.get(field) || "").trim())
+    .filter(Boolean);
+  const resumeMarkup = String(data.get("resumeHtml") || "").trim();
+
+  if (profilePreviewName) {
+    profilePreviewName.textContent = fullName;
+  }
+
+  if (profilePreviewRole) {
+    profilePreviewRole.textContent = [role, availability].filter(Boolean).join(" • ") || role;
+  }
+
+  if (profilePreviewBio) {
+    profilePreviewBio.textContent = bio;
+  }
+
+  if (profilePreviewStatus) {
+    profilePreviewStatus.textContent = status;
+  }
+
+  if (profilePreviewCity) {
+    profilePreviewCity.textContent = city || "City not set";
+  }
+
+  if (profilePreviewNewsletter) {
+    profilePreviewNewsletter.textContent = newsletterEnabled ? "Newsletter on" : "Newsletter off";
+  }
+
+  renderChipList(skillsManagerPreview, skills, "Add skills");
+  renderChipList(profileLinksPreview, links, "Add profile links");
+
+  const preferenceChips = [
+    ...preferences,
+    profileUiForm.elements.jobAlerts?.checked ? "Opportunity alerts" : "",
+    publicResume ? "Public resume" : "Private resume",
+  ].filter(Boolean);
+  renderChipList(profilePreferencesPreview, preferenceChips, "Add preferences");
+
+  if (resumeHtmlPreview) {
+    resumeHtmlPreview.textContent = resumeMarkup || "<section>Resume markup preview</section>";
+  }
+}
+
+async function compressToWebp(file, maxKilobytes = 700) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const src = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(src);
+
+      const MAX_DIM = 2400;
+      let w = img.naturalWidth;
+      let h = img.naturalHeight;
+      if (w > MAX_DIM || h > MAX_DIM) {
+        const scale = Math.min(MAX_DIM / w, MAX_DIM / h);
+        w = Math.round(w * scale);
+        h = Math.round(h * scale);
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+      const attempt = (quality) => {
+        canvas.toBlob((blob) => {
+          if (!blob) { reject(new Error('Canvas conversion failed.')); return; }
+          if (blob.size <= maxKilobytes * 1024 || quality <= 0.1) {
+            const name = file.name.replace(/\.[^.]+$/, '.webp');
+            resolve(new File([blob], name, { type: 'image/webp' }));
+          } else {
+            attempt(parseFloat((quality - 0.08).toFixed(2)));
+          }
+        }, 'image/webp', quality);
+      };
+
+      attempt(0.88);
+    };
+
+    img.onerror = () => { URL.revokeObjectURL(src); reject(new Error('Image failed to load.')); };
+    img.src = src;
+  });
+}
+
+async function uploadAdminImage(file, statusEl, urlInput, section, field, index) {
+  statusEl.textContent = 'Compressing…';
+  try {
+    const compressed = await compressToWebp(file);
+    const kb = (compressed.size / 1024).toFixed(0);
+    statusEl.textContent = `Uploading ${kb} KB…`;
+
+    const form = new FormData();
+    form.append('file', compressed);
+
+    const response = await fetch(adminEndpoint, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: form,
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.ok) throw new Error(result.message || 'Upload failed.');
+
+    urlInput.value = result.url;
+    updateDraftField(section, field, result.url, index !== '' ? index : null);
+
+    const wrapper = urlInput.closest('.admin-image-field');
+    if (wrapper) {
+      const old = wrapper.querySelector('.admin-image-preview, .admin-image-placeholder');
+      if (old) old.remove();
+      const preview = document.createElement('img');
+      preview.className = 'admin-image-preview';
+      preview.src = result.url;
+      preview.alt = '';
+      preview.loading = 'lazy';
+      wrapper.append(preview);
+    }
+
+    statusEl.textContent = `Saved · ${kb} KB`;
+  } catch (err) {
+    statusEl.textContent = err.message;
+  }
 }
 
 function escapeHtml(value) {
@@ -832,6 +1104,20 @@ adminSections?.addEventListener("input", (event) => {
   updateDraftField(field.dataset.section, field.dataset.field, field.value, field.dataset.index);
 });
 
+adminSections?.addEventListener("change", (event) => {
+  const fileInput = event.target.closest(".admin-image-file");
+  if (!fileInput || !fileInput.files?.[0]) return;
+
+  const { section, field, index } = fileInput.dataset;
+  const wrapper = fileInput.closest(".admin-image-field");
+  const statusEl = wrapper?.querySelector(".admin-image-status");
+  const urlInput = wrapper?.querySelector(".admin-image-url");
+  if (!statusEl || !urlInput) return;
+
+  uploadAdminImage(fileInput.files[0], statusEl, urlInput, section, field, index ?? null);
+  fileInput.value = "";
+});
+
 adminSections?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-action]");
   if (!button) {
@@ -904,7 +1190,114 @@ if (quoteForm && formNote) {
   });
 }
 
+accessTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    const key = tab.dataset.accessTab;
+    accessTabs.forEach((item) => item.classList.toggle("is-active", item === tab));
+    accessPanes.forEach((pane) => {
+      pane.classList.toggle("is-hidden", pane.dataset.accessPane !== key);
+    });
+  });
+});
+
+if (loginUiForm && loginUiNote) {
+  loginUiForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(loginUiForm);
+    const remembered = loginUiForm.elements.rememberSession?.checked ? " Session persistence is on." : "";
+    loginUiNote.textContent = `${data.get("email")}, the login UI is ready for account auth.${remembered}`;
+  });
+}
+
+if (signupUiForm && signupUiNote) {
+  signupUiForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(signupUiForm);
+    const email = String(data.get("email") || "").trim();
+    const accountType = String(data.get("accountType") || "Talent").trim();
+
+    signupUiNote.textContent = `${data.get("fullName")}, your ${accountType.toLowerCase()} signup flow is staged. Confirmation and verification emails are ready to send to ${email}.`;
+    setMessageState(
+      flowAccountStatus,
+      flowAccountDetail,
+      "sent",
+      "Created",
+      `Account setup prepared for ${email} with ${accountType.toLowerCase()} access.`
+    );
+    setMessageState(
+      flowVerifyStatus,
+      flowVerifyDetail,
+      "sent",
+      "Sent",
+      `Verification email queued for ${email} with a confirmation link and backup code.`
+    );
+  });
+}
+
+if (resetUiForm && resetUiNote) {
+  resetUiForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(resetUiForm);
+    const email = String(data.get("email") || "").trim();
+    const reason = String(data.get("reason") || "").trim();
+
+    resetUiNote.textContent = `Recovery instructions are prepared for ${email}. Reason logged: ${reason.toLowerCase()}.`;
+    setMessageState(
+      flowResetStatus,
+      flowResetDetail,
+      "sent",
+      "Sent",
+      `Password reset email prepared for ${email} with a secure time-limited link.`
+    );
+  });
+}
+
+if (verifyUiForm && verifyUiNote) {
+  verifyUiForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(verifyUiForm);
+    const email = String(data.get("email") || "").trim();
+
+    verifyUiNote.textContent = `${email} is marked verified in the UI flow. The next backend step is token validation and account activation.`;
+    setMessageState(
+      flowVerifyStatus,
+      flowVerifyDetail,
+      "ready",
+      "Verified",
+      `Email verified for ${email}. Welcome and profile completion messages can follow.`
+    );
+  });
+}
+
+profileUiForm?.addEventListener("input", renderProfileUiPreview);
+
+if (profileUiForm && profileUiNote) {
+  profileUiForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(profileUiForm);
+    const profileStatus = String(data.get("profileStatus") || "Public").toLowerCase();
+    profileUiNote.textContent = `${data.get("fullName")}, your ${profileStatus} profile settings are ready for account-backed saving.`;
+    renderProfileUiPreview();
+  });
+}
+
+if (companyAccessForm && companyAccessNote) {
+  companyAccessForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(companyAccessForm);
+    companyAccessNote.textContent = `${data.get("companyName")} request captured in the UI. The next backend step is request submission and approval workflow.`;
+    setMessageState(
+      flowCompanyStatus,
+      flowCompanyDetail,
+      "review",
+      "Review",
+      `${data.get("companyName")} access request is staged for ${data.get("requestedRole")} review.`
+    );
+  });
+}
+
 renderSite();
+renderProfileUiPreview();
 setActiveLink();
 syncAdminVisibility();
 

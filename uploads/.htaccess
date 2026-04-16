@@ -1,0 +1,6 @@
+# Serve images but block PHP execution in uploads
+Options -Indexes -ExecCGI
+<FilesMatch "\.ph(p[2-7]?|tml)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

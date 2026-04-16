@@ -296,26 +296,44 @@ function default_site_content(): array
             [
                 'name' => 'Ariel Coleman',
                 'role' => 'Product Designer',
+                'city' => 'Brooklyn, NY',
                 'bio' => 'Designs clear product surfaces, stronger hierarchy, and better onboarding across dashboards and launch sites.',
                 'skills' => ['UI Design', 'Design Systems', 'Journey Mapping'],
                 'availability' => 'Open for project work',
+                'profileStatus' => 'Public',
+                'newsletter' => 'Subscribed',
                 'interests' => ['Web platforms', 'Client portals'],
+                'preferences' => ['Remote friendly', 'Product strategy', 'Design leadership'],
+                'profileLinks' => ['https://portfolio.example.com/ariel', 'https://linkedin.com/in/ariel'],
+                'resumeHtml' => '<section><h1>Ariel Coleman</h1><p>Product designer focused on systems and launch sites.</p></section>',
             ],
             [
                 'name' => 'Marcus Lin',
                 'role' => 'Frontend Engineer',
+                'city' => 'Austin, TX',
                 'bio' => 'Builds interface systems with responsive structure, component discipline, and tight product detail.',
                 'skills' => ['JavaScript', 'PHP', 'UI Architecture'],
                 'availability' => 'Available part time',
+                'profileStatus' => 'Invite Only',
+                'newsletter' => 'Subscribed',
                 'interests' => ['Admin systems', 'Project marketplaces'],
+                'preferences' => ['Contract work', 'System rebuilds', 'Technical leadership'],
+                'profileLinks' => ['https://github.com/marcuslin', 'https://linkedin.com/in/marcuslin'],
+                'resumeHtml' => '<section><h1>Marcus Lin</h1><p>Frontend engineer for admin systems and interface architecture.</p></section>',
             ],
             [
                 'name' => 'Sanaa Brooks',
                 'role' => 'Integration Engineer',
+                'city' => 'Atlanta, GA',
                 'bio' => 'Connects APIs, automation layers, and operational data so internal tools and customer flows stay aligned.',
                 'skills' => ['APIs', 'Webhooks', 'Data Sync'],
                 'availability' => 'Available for sprint work',
+                'profileStatus' => 'Public',
+                'newsletter' => 'Digest Only',
                 'interests' => ['Integrations', 'Automation projects'],
+                'preferences' => ['Sprint delivery', 'Ops integrations', 'Platform reliability'],
+                'profileLinks' => ['https://github.com/sanaabrooks', 'https://linkedin.com/in/sanaabrooks'],
+                'resumeHtml' => '<section><h1>Sanaa Brooks</h1><p>Integration engineer focused on APIs, webhooks, and workflow sync.</p></section>',
             ],
         ],
     ];
@@ -335,6 +353,40 @@ function merge_deep(array $base, array $incoming): array
     return $base;
 }
 
+function normalize_site_content(array $content): array
+{
+    $defaults = default_site_content();
+    $collectionKeys = ['services', 'skills', 'opportunities', 'projects', 'companies', 'talent'];
+
+    foreach ($collectionKeys as $key) {
+        if (!isset($content[$key]) || !is_array($content[$key]) || $content[$key] === []) {
+            $content[$key] = $defaults[$key];
+            continue;
+        }
+
+        $template = $defaults[$key][0] ?? null;
+        if (!is_array($template)) {
+            continue;
+        }
+
+        $normalizedItems = [];
+        foreach ($content[$key] as $index => $item) {
+            $itemTemplate = is_array($defaults[$key][$index] ?? null) ? $defaults[$key][$index] : $template;
+            $normalizedItems[] = is_array($item) ? merge_deep($itemTemplate, $item) : $itemTemplate;
+        }
+
+        $content[$key] = $normalizedItems;
+    }
+
+    foreach (['companyInfo', 'branding', 'theme'] as $key) {
+        if (!isset($content[$key]) || !is_array($content[$key])) {
+            $content[$key] = $defaults[$key];
+        }
+    }
+
+    return merge_deep($defaults, $content);
+}
+
 function get_site_content(): array
 {
     $defaults = default_site_content();
@@ -350,7 +402,7 @@ function get_site_content(): array
             if (is_array($row) && isset($row['content_json'])) {
                 $decoded = json_decode((string) $row['content_json'], true);
                 if (is_array($decoded)) {
-                    return merge_deep($defaults, $decoded);
+                    return normalize_site_content($decoded);
                 }
             }
         } catch (Throwable) {
@@ -372,7 +424,7 @@ function get_site_content(): array
         return $defaults;
     }
 
-    return merge_deep($defaults, $decoded);
+    return normalize_site_content($decoded);
 }
 
 function save_site_content(array $content): void

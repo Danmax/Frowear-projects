@@ -293,6 +293,7 @@ h3 {
 .skill-grid,
 .opportunity-grid,
 .network-grid,
+.access-layout,
 .branding-layout,
 .theme-swatches,
 .quote-layout {
@@ -464,6 +465,210 @@ h3 {
 .opportunity-grid,
 .network-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.access-layout {
+  grid-template-columns: 240px minmax(0, 1fr);
+}
+
+.access-rail {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.access-tab {
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+}
+
+.access-tab:hover,
+.access-tab.is-active {
+  border-color: var(--cyan);
+  background: rgba(75, 231, 255, 0.14);
+}
+
+.access-stage {
+  display: grid;
+  gap: 1rem;
+}
+
+.access-pane {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.access-pane.is-hidden {
+  display: none;
+}
+
+.access-card {
+  padding: 1.15rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.access-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.access-form label {
+  display: grid;
+  gap: 0.5rem;
+  color: var(--text);
+}
+
+.access-form input,
+.access-form select,
+.access-form textarea {
+  width: 100%;
+  padding: 0.88rem 0.95rem;
+  border: 1px solid rgba(104, 199, 255, 0.2);
+  border-radius: 6px;
+  background: rgba(5, 12, 24, 0.95);
+  color: var(--text);
+}
+
+.access-form input:focus,
+.access-form select:focus,
+.access-form textarea:focus {
+  outline: 1px solid var(--cyan);
+  border-color: var(--cyan);
+}
+
+.access-form .form-span,
+.access-form .button,
+.access-form .form-note {
+  grid-column: 1 / -1;
+}
+
+.access-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.toggle-option {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 3.1rem;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid rgba(104, 199, 255, 0.2);
+  border-radius: 6px;
+  background: rgba(5, 12, 24, 0.88);
+}
+
+.toggle-option input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--cyan);
+}
+
+.access-list {
+  margin: 1rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.access-list li {
+  margin: 0.5rem 0;
+}
+
+.message-flow {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.message-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(104, 199, 255, 0.16);
+  background: rgba(6, 14, 27, 0.82);
+}
+
+.message-card strong {
+  font-size: 1rem;
+}
+
+.message-card p,
+.profile-preview p {
+  margin: 0;
+}
+
+.message-state {
+  width: fit-content;
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(104, 199, 255, 0.24);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.message-state--waiting {
+  color: var(--muted);
+}
+
+.message-state--sent {
+  color: var(--cyan);
+  border-color: rgba(75, 231, 255, 0.45);
+  background: rgba(75, 231, 255, 0.12);
+}
+
+.message-state--ready {
+  color: var(--green);
+  border-color: rgba(156, 255, 143, 0.42);
+  background: rgba(156, 255, 143, 0.12);
+}
+
+.message-state--review {
+  color: var(--pink);
+  border-color: rgba(255, 106, 213, 0.42);
+  background: rgba(255, 106, 213, 0.12);
+}
+
+.profile-preview {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.profile-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.profile-resume-preview {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.resume-code {
+  margin: 0;
+  padding: 0.95rem;
+  border: 1px solid rgba(104, 199, 255, 0.16);
+  border-radius: 6px;
+  background: rgba(5, 12, 24, 0.88);
+  color: var(--muted);
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .project-card {
@@ -767,6 +972,42 @@ h3 {
   color: var(--cyan);
 }
 
+.admin-image-field {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.admin-image-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-image-status {
+  font-size: 0.82rem;
+  color: var(--muted);
+  min-width: 0;
+}
+
+.admin-image-preview {
+  width: 100%;
+  max-height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+
+.admin-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  border: 1px dashed rgba(104, 199, 255, 0.2);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
 @media (max-width: 1100px) {
   .signal-strip,
   .hero-metrics,
@@ -779,6 +1020,7 @@ h3 {
   .company-layout,
   .branding-layout,
   .quote-layout,
+  .access-layout,
   .network-grid {
     grid-template-columns: 1fr;
   }
@@ -821,7 +1063,11 @@ h3 {
   }
 
   .hero-content {
-    padding: 5.6rem 0 4rem;
+    padding: 4.5rem 0 3rem;
+  }
+
+  .section {
+    padding: 2.5rem 0;
   }
 
   .section-header,
@@ -840,10 +1086,48 @@ h3 {
   .skill-grid,
   .opportunity-grid,
   .network-grid,
+  .access-pane,
+  .access-toggle-grid,
+  .access-form,
   .company-facts,
   .quote-form,
   .admin-grid {
     grid-template-columns: 1fr;
+  }
+
+  .filter-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .filter-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-chip {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .access-rail {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    align-content: unset;
+  }
+
+  .access-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .access-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    min-height: 44px;
   }
 }
 
@@ -853,18 +1137,23 @@ h3 {
   .section,
   .site-footer,
   .hero-content {
-    width: min(100% - 1rem, 100%);
+    width: calc(100% - 2rem);
   }
 
-  .button,
-  .filter-chip,
-  .admin-trigger {
-    width: 100%;
+  .section {
+    padding: 1.75rem 0;
   }
 
-  .hero-actions,
-  .header-actions {
+  .hero-content {
+    padding: 3.5rem 0 2.5rem;
+  }
+
+  .hero-actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .hero-actions .button {
+    width: 100%;
   }
 }

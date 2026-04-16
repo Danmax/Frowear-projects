@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Full-bleed background — no rounded corners (required for maskable) -->
+  <rect width="512" height="512" fill="#040914"/>
+  <!-- Subtle inner border, inset well within safe zone -->
+  <rect x="16" y="16" width="480" height="480" fill="none" stroke="#4be7ff" stroke-width="1.5" opacity="0.18"/>
+  <!--
+    Maskable safe zone: circle r=204 centred at 256,256.
+    Text at font-size 210 with baseline y=320 keeps glyphs roughly
+    within x:80–432, y:110–328 — comfortably inside the safe zone.
+  -->
+  <text
+    x="256"
+    y="320"
+    text-anchor="middle"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-weight="900"
+    font-size="210"
+    fill="#4be7ff"
+    letter-spacing="4"
+  >FP</text>
+</svg>
