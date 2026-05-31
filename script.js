@@ -4,8 +4,9 @@ const adminEndpoint = window.__FW_ADMIN_ENDPOINT__ || "admin.php";
 const siteState = structuredClone(defaultContent);
 let adminDraft = structuredClone(siteState);
 let activeProjectFilter = "all";
+let activeFeaturedIndex = 0;
 let isAdminUnlocked = Boolean(window.__FW_ADMIN_AUTHENTICATED__);
-let activeAdminTab = "companyInfo";
+let activeAdminTab = "projects";
 
 const menuToggle = document.querySelector(".menu-toggle");
 const siteNav = document.querySelector(".site-nav");
@@ -24,6 +25,9 @@ const adminSave = document.querySelector("#adminSave");
 const adminReset = document.querySelector("#adminReset");
 const adminLogout = document.querySelector("#adminLogout");
 const adminSaveNote = document.querySelector("#adminSaveNote");
+const featuredCarousel = document.querySelector("#featuredCarousel");
+const featuredPrev = document.querySelector("#featuredPrev");
+const featuredNext = document.querySelector("#featuredNext");
 const quoteForm = document.querySelector("#quote-form");
 const formNote = document.querySelector("#form-note");
 const accessTabs = [...document.querySelectorAll(".access-tab")];
@@ -133,12 +137,17 @@ const adminTabConfig = [
         { field: "status", label: "Status" },
         { field: "company", label: "Company" },
         { field: "stage", label: "Stage" },
+        { field: "featured", label: "Featured? yes/no" },
         { field: "image", label: "Image", type: "image" },
         { field: "alt", label: "Image alt text" },
         { field: "summary", label: "Summary", type: "textarea" },
         { field: "points", label: "Bullet points", type: "list" },
         { field: "stack", label: "Stack tags", type: "list" },
         { field: "needs", label: "Needed skills", type: "list" },
+        { field: "primaryActionLabel", label: "Primary action label" },
+        { field: "primaryActionUrl", label: "Primary action URL" },
+        { field: "secondaryActionLabel", label: "Secondary action label" },
+        { field: "secondaryActionUrl", label: "Secondary action URL" },
       ]),
   },
   {
@@ -220,16 +229,6 @@ const adminTabConfig = [
         ],
       }),
   },
-  {
-    key: "theme",
-    label: "Theme",
-    render: () =>
-      renderObjectSection({
-        title: "Theme",
-        section: "theme",
-        fields: Object.keys(siteState.theme).map((field) => ({ field, label: field })),
-      }),
-  },
 ];
 
 function getValue(path) {
@@ -255,9 +254,9 @@ function renderTextTargets() {
 
 function renderHeroMetrics() {
   const metrics = [
-    { title: siteState.services[0]?.title || "Web + UI", detail: siteState.services[0]?.description || "" },
-    { title: siteState.services[1]?.title || "Systems", detail: siteState.services[1]?.description || "" },
-    { title: siteState.services[5]?.title || "Talent Platforms", detail: siteState.services[5]?.description || "" },
+    { title: siteState.services[0]?.title || "Web + UI", detail: "Fast launch pages and product sites" },
+    { title: siteState.services[1]?.title || "Systems", detail: "Dashboards, workflows, and portals" },
+    { title: siteState.services[3]?.title || "Integrations", detail: "Payments, CRM, analytics, and APIs" },
   ];
 
   document.querySelector("#heroMetrics").innerHTML = metrics
@@ -284,6 +283,74 @@ function renderSignalStrip() {
       `
     )
     .join("");
+}
+
+function isFeaturedProject(project) {
+  return String(project.featured || "").toLowerCase() === "yes" || project.featured === true;
+}
+
+function projectActions(project) {
+  return [
+    {
+      label: project.primaryActionLabel || "Start Project",
+      url: project.primaryActionUrl || "#quote",
+      className: "button button-primary",
+    },
+    {
+      label: project.secondaryActionLabel || "View Details",
+      url: project.secondaryActionUrl || "#work",
+      className: "button button-secondary",
+    },
+  ];
+}
+
+function featuredProjects() {
+  const featured = siteState.projects.filter(isFeaturedProject);
+  return featured.length ? featured : siteState.projects.slice(0, 3);
+}
+
+function renderFeaturedCarousel() {
+  if (!featuredCarousel) {
+    return;
+  }
+
+  const projects = featuredProjects();
+  if (!projects.length) {
+    featuredCarousel.innerHTML = "";
+    return;
+  }
+
+  activeFeaturedIndex = Math.max(0, Math.min(activeFeaturedIndex, projects.length - 1));
+  const project = projects[activeFeaturedIndex];
+  const actions = projectActions(project);
+
+  featuredCarousel.innerHTML = `
+    <article class="featured-card">
+      <div class="featured-image-wrap">
+        <img src="${escapeAttribute(project.image)}" alt="${escapeAttribute(project.alt || project.title)}" />
+      </div>
+      <div class="featured-copy">
+        <div class="project-meta">
+          <span>${escapeHtml(labelFromCategory(project.category || "project"))}</span>
+          <span>${escapeHtml(project.status || "Active")}</span>
+          <span>${escapeHtml(project.stage || "Planning")}</span>
+        </div>
+        <h3>${escapeHtml(project.title)}</h3>
+        <p>${escapeHtml(project.summary || "")}</p>
+        <ul class="project-points">
+          ${(project.points || []).slice(0, 3).map((point) => `<li>${escapeHtml(point)}</li>`).join("")}
+        </ul>
+        <div class="chip-cloud">
+          ${(project.stack || []).slice(0, 4).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
+        </div>
+        <div class="featured-actions">
+          ${actions
+            .map((action) => `<a class="${action.className}" href="${escapeAttribute(action.url)}">${escapeHtml(action.label)}</a>`)
+            .join("")}
+        </div>
+      </div>
+    </article>
+  `;
 }
 
 function renderCompanyFacts() {
@@ -318,7 +385,7 @@ function buildProjectCategories() {
 }
 
 function labelFromCategory(category) {
-  return category
+  return String(category || "project")
     .split("-")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
@@ -359,17 +426,14 @@ function renderProjects() {
             <ul class="project-points">
               ${(project.points || []).map((point) => `<li>${escapeHtml(point)}</li>`).join("")}
             </ul>
-            <div class="project-tag-group">
-              <strong>Stack</strong>
-              <div class="chip-cloud">
-                ${(project.stack || []).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
-              </div>
+            <div class="chip-cloud">
+              ${(project.stack || []).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
+              ${(project.needs || []).map((item) => `<div class="focus-chip focus-chip--muted">${escapeHtml(item)}</div>`).join("")}
             </div>
-            <div class="project-tag-group">
-              <strong>Needed</strong>
-              <div class="chip-cloud">
-                ${(project.needs || []).map((item) => `<div class="focus-chip">${escapeHtml(item)}</div>`).join("")}
-              </div>
+            <div class="card-action-row">
+              ${projectActions(project)
+                .map((action) => `<a class="${action.className}" href="${escapeAttribute(action.url)}">${escapeHtml(action.label)}</a>`)
+                .join("")}
             </div>
           </div>
         </article>
@@ -503,30 +567,6 @@ function renderTalent() {
     .join("");
 }
 
-function renderBranding() {
-  document.querySelector("#brandHighlights").innerHTML = siteState.branding.highlights
-    .map(
-      (item) => `
-        <div class="highlight-item">
-          <span>Brand</span>
-          <strong>${escapeHtml(item)}</strong>
-        </div>
-      `
-    )
-    .join("");
-
-  document.querySelector("#themeSwatches").innerHTML = Object.entries(siteState.theme)
-    .map(
-      ([key, value]) => `
-        <div class="theme-swatch">
-          <i style="background:${escapeAttribute(value)}"></i>
-          <span>${escapeHtml(key)}</span>
-        </div>
-      `
-    )
-    .join("");
-}
-
 function renderQuoteOptions() {
   const select = document.querySelector("#quoteProjectType");
   const options = siteState.services.map((service) => service.title);
@@ -552,6 +592,7 @@ function renderSite() {
   renderTextTargets();
   renderHeroMetrics();
   renderSignalStrip();
+  renderFeaturedCarousel();
   renderCompanyFacts();
   renderFocusAreas();
   renderProjectFilters();
@@ -561,7 +602,6 @@ function renderSite() {
   renderOpportunities();
   renderCompanies();
   renderTalent();
-  renderBranding();
   renderQuoteOptions();
 }
 
@@ -783,6 +823,11 @@ function addCollectionItem(collection) {
       points: ["Add project detail"],
       stack: ["Add stack"],
       needs: ["Add needed skill"],
+      featured: "no",
+      primaryActionLabel: "Start Project",
+      primaryActionUrl: "#quote",
+      secondaryActionLabel: "View Details",
+      secondaryActionUrl: "#work",
     },
     services: { title: "New Service", description: "" },
     skills: { name: "New Skill", summary: "" },
@@ -1047,6 +1092,26 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("scroll", setActiveLink, { passive: true });
+
+featuredPrev?.addEventListener("click", () => {
+  const projects = featuredProjects();
+  if (!projects.length) {
+    return;
+  }
+
+  activeFeaturedIndex = (activeFeaturedIndex - 1 + projects.length) % projects.length;
+  renderFeaturedCarousel();
+});
+
+featuredNext?.addEventListener("click", () => {
+  const projects = featuredProjects();
+  if (!projects.length) {
+    return;
+  }
+
+  activeFeaturedIndex = (activeFeaturedIndex + 1) % projects.length;
+  renderFeaturedCarousel();
+});
 
 navLinks.forEach((link) => {
   link.addEventListener("click", () => {

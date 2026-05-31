@@ -16,7 +16,7 @@ $isAdminAuthenticated = is_admin_authenticated();
       name="description"
       content="Frowear Productions builds high-tech websites, complete systems, APIs, integrations, opportunity networks, and talent-ready project platforms."
     />
-    <meta name="theme-color" content="#4be7ff" />
+    <meta name="theme-color" content="#ff8a65" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -29,7 +29,7 @@ $isAdminAuthenticated = is_admin_authenticated();
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;700&amp;display=swap"
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&amp;display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
@@ -52,14 +52,9 @@ $isAdminAuthenticated = is_admin_authenticated();
       </div>
 
       <nav id="site-nav" class="site-nav" aria-label="Primary">
-        <a href="#company">Company</a>
         <a href="#work">Projects</a>
         <a href="#services">Services</a>
-        <a href="#opportunities">Opportunities</a>
-        <a href="#companies">Companies</a>
-        <a href="#talent">Talent</a>
         <a href="#access">Access</a>
-        <a href="#branding">Branding</a>
         <a href="#quote">Free Quote</a>
       </nav>
     </header>
@@ -81,10 +76,24 @@ $isAdminAuthenticated = is_admin_authenticated();
 
       <section class="signal-strip" id="signalStrip" aria-label="Capabilities overview"></section>
 
+      <section class="featured-projects" id="featured">
+        <div class="featured-header">
+          <div>
+            <p class="eyebrow">Featured Work</p>
+            <h2>Project highlights ready for action</h2>
+          </div>
+          <div class="carousel-actions" aria-label="Featured project controls">
+            <button class="icon-button" id="featuredPrev" type="button" aria-label="Previous featured project">‹</button>
+            <button class="icon-button" id="featuredNext" type="button" aria-label="Next featured project">›</button>
+          </div>
+        </div>
+        <div class="featured-carousel" id="featuredCarousel"></div>
+      </section>
+
       <section class="section" id="company">
         <div class="section-header">
           <div>
-            <p class="eyebrow">Company Info</p>
+            <p class="eyebrow">Company</p>
             <h2 id="companyHeading"></h2>
           </div>
           <p class="section-copy" id="companyIntro"></p>
@@ -110,13 +119,10 @@ $isAdminAuthenticated = is_admin_authenticated();
       <section class="section" id="work">
         <div class="section-header">
           <div>
-            <p class="eyebrow">Project Gallery</p>
-            <h2>Dynamic project cards with teams, needs, and stack visibility</h2>
+            <p class="eyebrow">Projects</p>
+            <h2>Round image cards. Fast details.</h2>
           </div>
-          <p class="section-copy">
-            Projects now surface status, company ownership, stack, required skills, and a stronger
-            card layout so the gallery reads like live work instead of flat placeholders.
-          </p>
+          <p class="section-copy">Browse active work by type. Each card keeps the summary short, then uses bullets and data pills for quick scanning.</p>
         </div>
 
         <div class="filter-bar" id="projectFilters" role="toolbar" aria-label="Project filters"></div>
@@ -127,12 +133,9 @@ $isAdminAuthenticated = is_admin_authenticated();
         <div class="section-header">
           <div>
             <p class="eyebrow">Services</p>
-            <h2>What customers can bring in</h2>
+            <h2>Clear build lanes</h2>
           </div>
-          <p class="section-copy">
-            Service lanes remain editable in admin and now align directly with company profiles,
-            opportunities, and project creation.
-          </p>
+          <p class="section-copy">Simple service options that map directly to project planning, quote requests, and admin-managed project cards.</p>
         </div>
 
         <div class="service-grid" id="serviceGrid"></div>
@@ -142,12 +145,9 @@ $isAdminAuthenticated = is_admin_authenticated();
         <div class="section-header">
           <div>
             <p class="eyebrow">Skills</p>
-            <h2>Engineering and design strengths</h2>
+            <h2>What we bring</h2>
           </div>
-          <p class="section-copy">
-            Skills can describe studio capabilities, company needs, and talent strengths in one shared
-            vocabulary.
-          </p>
+          <p class="section-copy">Short capability notes keep the page easier to understand and easier to maintain.</p>
         </div>
 
         <div class="skill-grid" id="skillGrid"></div>
@@ -564,31 +564,6 @@ $isAdminAuthenticated = is_admin_authenticated();
         </div>
       </section>
 
-      <section class="section" id="branding">
-        <div class="section-header">
-          <div>
-            <p class="eyebrow">Branding + Theme</p>
-            <h2>Visible brand and theme options</h2>
-          </div>
-          <p class="section-copy">
-            Brand highlights, focus areas, and theme colors remain editable from the admin workspace
-            and reflected live across the site.
-          </p>
-        </div>
-
-        <div class="branding-layout">
-          <article class="brand-card">
-            <p class="company-kicker">Brand Highlights</p>
-            <div class="brand-highlights" id="brandHighlights"></div>
-          </article>
-
-          <article class="brand-card">
-            <p class="company-kicker">Theme Palette</p>
-            <div class="theme-swatches" id="themeSwatches"></div>
-          </article>
-        </div>
-      </section>
-
       <section class="section quote-section" id="quote">
         <div class="quote-layout">
           <div class="quote-copy">
@@ -640,7 +615,7 @@ $isAdminAuthenticated = is_admin_authenticated();
       <div class="admin-panel__header">
         <div>
           <p class="eyebrow">Admin</p>
-          <h2>Content Controls</h2>
+          <h2>Project Backend</h2>
         </div>
         <button class="admin-close" id="adminClose" type="button" aria-label="Close admin panel">
           Close
